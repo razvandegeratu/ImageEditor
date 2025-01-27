@@ -1,0 +1,75 @@
+//  Copyright 313CA Degeratu Razvan-Andrei
+In main citesc comanda initiala. Daca nu corespunde tiparului,
+afisez "Invalid command".
+Daca este Exit, se dealoca resursele si se iese din program.
+Daca se citeste LOAD, se citeste numele fisierului, si se verifica
+daca a mai fost incarcata vreo matrice. Daca a mai fost, se dealoca.
+Apoi se incarca imaginea prin functia load.
+
+Functia load incepe prin a deschide fisierul in mod binar
+Am programat defenisv, astfel daca nu se reuseste deschiderea, 
+se afiseaza mesaj de eroare.
+Altfel, se citesc din fisier elementele corespunzatoare imaginii:
+tipul de imagine si dimensiunile. Daca imaginea este grayscale,
+se aloca width * height elemente, daca este color, 3 * width 8 height
+Pentru fisierele ascii am citit cu fscanf, iar pentru cele binare cu fread,
+folosindu ma de un unsigned char c pentru a citi fiecare byte
+
+Functia save incepe prin verificare daca salvarea este ascii sau binara
+si prin citirea destinatei
+Daca este ascii, se deshide fisierul destinatie, si am scris cu fprintf.
+Daca este binara, se deschide fisierul destinatie si am scris cu fwrite,
+scriind cate un octet cu sizeof(char)
+
+Functia select citeste linia si verifica daca este Select all sau nu.
+In functia read_select se verifica faptul ca selectia este valida
+Daca este valida, in functia select_area am prelucrat si verificat
+coordonatele astfel incat sa fie in ordinea corecta
+iar in functia upd_coord le-am actualizat
+In functia select_entire area, am atribuit coordonatelor valorile marginale
+
+Functia crop trateaza separat imaginile color de cele grayscale.
+Daca imaginea este grayscale, am declarat si alocat
+o matrice cu dimensiunile selectiei si i-am atribuit valorile vechii matrici.
+Daca imaginea este color, am facut acelasi lucru,
+dar latimea este de 3 ori mai mare.
+Am obtinut dimensiunile imaginii cropped contorizand atribuirile facute
+
+Functia apply are un main_apply, unde tratez cazurile de exceptie
+si unde verific instructiunea pentru comanda
+Pentru fiecare comanda posibila, am facut cate o functie,
+in care am declarat matricea kernel asociata.
+Spre ex, in functia blur: am declarat matricea resultat si am alocat-o,
+am tratat cazurile in care selectia include marginile,
+apropiind selectia spre centru fiind elemente de tip double in matrice,
+sum_rgb au fost declarate double
+sum_red se calculeaza prin 9 sume de produse intre elementele kernelului
+si fiecare pixel si vecinii sai.
+La sfarsit, am atribuit valoarea clamped pixelilor potriviti
+si am dealocat memoria.
+
+Functia histogram citeste numarul de stelute si de binuri si
+urmatorul parametru pentru a ma asigura ca sunt exact 2.
+M-am folosit de output-ul functiei scanf. Am doi vectori de frecventa,
+frecv pentru toate valorile intre 1 si 255 si freq pentru numarul coresp de binuri.
+Am determinat maximul, iar apoi am calculat cate stelute trebuie pe fiecare rand,
+printez dupa cum se cere si cu un for pana la freq printez stelutele.
+
+Functia equalize aloca o matrice auxiliara, am declarat numar real variabila sum pentru a calcula suma valorilor H
+pana la valoarea pixelului respectiv. in vectorul H am stocat frecventa fiecarui pixel. Apoi am folosit formula pentru fiecare pixel
+si am facut clamp si round. Functia se termina cu eliberarea memoriei.
+
+Functia rotate citeste unghiul de rotatie si intra in functia void main_rotate
+Unde se verifica veridicitatea unghiului si daca se roteste imaginea sau doar selectia
+Numarul de rotiri este in functie de unghi.
+Daca este patrat, am rotit matricea in place folosindu-ma de un auxiliar.
+Daca este selectia totala, am functia care returneaza matricea rotita.
+In functie am declarat matricea auxiliara si am folosit un algoritm care transpune 
+si inverseaza coloanele.
+Se schimba dimensiunile si se elibereaza memoria.
+
+*Am incercat sa programez cat mai defensiv si sa las linii libere pentru
+lizibilitatea codului
+*Dupa fiecare comanda citita, daca nu este Exit, se mai citeste inca o
+instructiune.
+
